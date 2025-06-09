@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { BriefcaseIcon, CalendarIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import { BriefcaseIcon } from '@heroicons/react/24/outline';
 
 const Experience: React.FC = () => {
   const experiences = [
@@ -126,53 +126,39 @@ const Experience: React.FC = () => {
               className="bg-primary p-6 rounded-lg shadow-lg border border-secondary/10"
               variants={cardVariants}
               whileHover="hover"
-              custom={index}
+              initial="hidden"
+              animate="visible"
             >
-              <motion.div 
-                className="flex flex-col md:flex-row md:items-center justify-between mb-4"
-                variants={itemVariants}
-              >
-                <div>
-                  <motion.h3 
-                    className="text-xl font-bold text-textPrimary mb-1"
-                    whileHover={{ scale: 1.05, color: "#64ffda" }}
-                  >
-                    {exp.company || exp.position}
-                  </motion.h3>
-                  <motion.p 
-                    className="text-lg text-secondary"
-                    whileHover={{ scale: 1.05 }}
-                  >
-                    {exp.position}
-                  </motion.p>
-                </div>
-                <motion.p 
-                  className="text-textSecondary mt-2 md:mt-0"
-                  variants={itemVariants}
+              <div>
+                <motion.h3 
+                  className="text-xl font-bold text-textPrimary mb-2"
+                  whileHover={{ scale: 1.05 }}
                 >
-                  {exp.duration || exp.period}
+                  {exp.company}
+                </motion.h3>
+                <motion.p 
+                  className="text-lg text-secondary mb-2"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  {exp.position}
                 </motion.p>
-              </motion.div>
-
-              <motion.ul className="space-y-3 text-textSecondary">
+                <motion.p 
+                  className="text-textSecondary"
+                >
+                  {exp.period}
+                </motion.p>
+              </div>
+              <div className="mt-4">
                 {exp.description.map((item, i) => (
-                  <motion.li
+                  <motion.p
                     key={i}
-                    className="flex items-start gap-2"
+                    className="text-textSecondary mb-2"
                     variants={listItemVariants}
-                    whileHover={{ x: 10 }}
                   >
-                    <motion.span
-                      className="text-secondary mt-1.5"
-                      initial={{ scale: 1 }}
-                      whileHover={{ scale: 1.2 }}
-                    >
-                      •
-                    </motion.span>
                     {item}
-                  </motion.li>
+                  </motion.p>
                 ))}
-              </motion.ul>
+              </div>
             </motion.div>
           ))}
         </div>

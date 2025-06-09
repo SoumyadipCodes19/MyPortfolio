@@ -1,17 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { AcademicCapIcon, TrophyIcon, BookOpenIcon, CalendarIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import { AcademicCapIcon, CalendarIcon, MapPinIcon } from '@heroicons/react/24/outline';
 
 const Education: React.FC = () => {
-  const courses = [
-    'Programming in Python and Java',
-    'Structured and Object-Oriented Programming',
-    'Data Structures and Algorithms',
-    'Discrete Mathematics and Graph Theory',
-    'Software Engineering',
-    'Probability and Statistics'
-  ];
-
   const education = [
     {
       school: 'Vellore Institute of Technology',

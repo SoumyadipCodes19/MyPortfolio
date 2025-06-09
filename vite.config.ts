@@ -9,6 +9,20 @@ export default defineConfig({
     sourcemap: false,
     minify: 'terser',
     cssMinify: true,
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'framer-motion'],
+          icons: ['@heroicons/react', 'react-icons']
+        }
+      }
+    }
   },
   server: {
     port: 5173,

@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio Website
 
-## Getting Started
+A modern, responsive portfolio website built with React, TypeScript, and Tailwind CSS, featuring smooth animations and a clean design.
 
-First, run the development server:
+## 🌟 Features
 
+- **Responsive Design**: Fully responsive layout that works seamlessly on all devices
+- **Modern UI**: Clean and professional interface with smooth animations
+- **Dark Theme**: Eye-friendly dark mode design
+- **Interactive Elements**: Engaging hover effects and transitions
+- **Smooth Scrolling**: Section-based navigation with smooth scroll
+- **Animated Components**: Powered by Framer Motion for fluid animations
+- **Mobile-First**: Optimized for mobile devices with a hamburger menu
+
+## 🛠️ Technologies Used
+
+- **React.js** - Frontend framework
+- **TypeScript** - Type-safe code
+- **Tailwind CSS** - Styling and responsive design
+- **Framer Motion** - Animations
+- **Hero Icons** - Icons
+- **React Icons** - Additional icons
+- **Vite** - Build tool
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (v14 or higher)
+- npm or yarn
+
+### Installation
+
+1. Clone the repository
+```bash
+git clone https://github.com/yourusername/portfolio-website.git
+```
+
+2. Navigate to the project directory
+```bash
+cd portfolio-website
+```
+
+3. Install dependencies
+```bash
+npm install
+# or
+yarn install
+```
+
+4. Start the development server
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Open your browser and visit `http://localhost:5173`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📁 Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+portfolio-website/
+├── src/
+│   ├── components/
+│   │   ├── Navbar.tsx
+│   │   ├── Hero.tsx
+│   │   ├── Experience.tsx
+│   │   ├── Projects.tsx
+│   │   ├── Education.tsx
+│   │   ├── Skills.tsx
+│   │   └── Contact.tsx
+│   ├── App.tsx
+│   └── index.css
+├── public/
+├── package.json
+├── tsconfig.json
+├── tailwind.config.js
+└── README.md
+```
 
-## Learn More
+## 📱 Responsive Design
 
-To learn more about Next.js, take a look at the following resources:
+The website is fully responsive with breakpoints:
+- Mobile: < 768px
+- Tablet: 768px - 1024px
+- Desktop: > 1024px
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🎨 Color Scheme
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```javascript
+primary: "#0F172A"    // Dark background
+secondary: "#6EE7B7"  // Accent green
+accent: "#3B82F6"     // Blue accent
+textPrimary: "#E2E8F0"    // Light text
+textSecondary: "#94A3B8"  // Secondary text
+darkBg: "#020617"     // Darker background
+cardBg: "#1E293B"     // Card background
+```
 
-## Deploy on Vercel
+## 🔧 Customization
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Colors**: Edit `tailwind.config.js` to modify the color scheme
+2. **Content**: Update component files in `src/components` to modify content
+3. **Styling**: Modify `src/index.css` for global styles
+4. **Animations**: Adjust Framer Motion variants in components for different animations
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+
+## 🙏 Acknowledgments
+
+- [React](https://reactjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Framer Motion](https://www.framer.com/motion/)
+- [Hero Icons](https://heroicons.com/)
+- [React Icons](https://react-icons.github.io/react-icons/)

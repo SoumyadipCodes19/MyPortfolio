@@ -150,7 +150,7 @@ const Experience: React.FC = () => {
                   className="text-textSecondary mt-2 md:mt-0"
                   variants={itemVariants}
                 >
-                  {exp.duration || exp.period}
+                  {exp.period}
                 </motion.p>
               </motion.div>
 

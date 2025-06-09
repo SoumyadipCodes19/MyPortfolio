@@ -103,7 +103,7 @@ const Projects: React.FC = () => {
           <h2 className="text-3xl font-bold text-textPrimary">Projects</h2>
         </motion.div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {projects.map((project, index) => (
+          {projects.map((project) => (
             <motion.div
               key={project.title}
               className="bg-primary p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow"

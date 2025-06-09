@@ -1,5 +1,6 @@
 import React from 'react';
-import { EnvelopeIcon, MapPinIcon, PhoneIcon } from '@heroicons/react/24/outline';
+import { motion } from 'framer-motion';
+import { EnvelopeIcon } from '@heroicons/react/24/outline';
 
 const Contact: React.FC = () => {
   const contactInfo = [

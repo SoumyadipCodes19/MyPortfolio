@@ -5,9 +5,21 @@
   "framework": "vite",
   "outputDirectory": "dist",
   "routes": [
+    { 
+      "src": "/assets/(.*)\\.js",
+      "headers": { "content-type": "application/javascript" },
+      "dest": "/assets/$1.js"
+    },
+    { 
+      "src": "/assets/(.*)\\.css",
+      "headers": { "content-type": "text/css" },
+      "dest": "/assets/$1.css"
+    },
     {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
+      "src": "/favicon.svg",
+      "headers": { "content-type": "image/svg+xml" },
+      "dest": "/favicon.svg"
+    },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 } 

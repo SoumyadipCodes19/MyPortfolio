@@ -1,4 +1,4 @@
-import { type FC } from 'react'
+import React from 'react'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Experience from './components/Experience'
@@ -7,7 +7,7 @@ import Education from './components/Education'
 import Skills from './components/Skills'
 import Contact from './components/Contact'
 
-const App: FC = () => {
+function App() {
   return (
     <div className="min-h-screen bg-darkBg text-textPrimary">
       <Navbar />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { EnvelopeIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import { EnvelopeIcon, MapPinIcon, PhoneIcon } from '@heroicons/react/24/outline';
 
 const Contact: React.FC = () => {
   const contactInfo = [

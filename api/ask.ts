@@ -1,9 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-// ─── Simple in-memory rate limiter ──────────────────────────────────────────
+// ─── Rate limiter ────────────────────────────────────────────────────────────
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 const RATE_LIMIT = 15;
-const WINDOW_MS = 60 * 60 * 1000; // 1 hour
+const WINDOW_MS = 60 * 60 * 1000;
 
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
@@ -17,9 +17,52 @@ function isRateLimited(ip: string): boolean {
   return false;
 }
 
+// Try these models in order until one succeeds
+const MODELS = [
+  'gemini-2.0-flash',
+  'gemini-1.5-flash',
+  'gemini-1.5-flash-latest',
+];
+
+const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
+
+async function callGemini(apiKey: string, prompt: string): Promise<string | null> {
+  for (const model of MODELS) {
+    try {
+      const url = `${BASE_URL}/${model}:generateContent?key=${apiKey}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.4, maxOutputTokens: 300 },
+        }),
+      });
+
+      const raw = await res.text();
+
+      if (!res.ok) {
+        console.error(`[ask] ${model} failed ${res.status}: ${raw.slice(0, 300)}`);
+        continue; // try next model
+      }
+
+      const data = JSON.parse(raw) as {
+        candidates?: Array<{ content: { parts: Array<{ text: string }> } }>;
+      };
+      const answer = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? null;
+      if (answer) {
+        console.log(`[ask] Success with model: ${model}`);
+        return answer;
+      }
+    } catch (err) {
+      console.error(`[ask] ${model} threw:`, err);
+    }
+  }
+  return null;
+}
+
 // ─── Handler ─────────────────────────────────────────────────────────────────
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -27,7 +70,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  // Rate limiting
   const ip =
     (req.headers['x-forwarded-for'] as string | undefined)?.split(',')[0].trim() ??
     req.socket?.remoteAddress ??
@@ -37,51 +79,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(429).json({ error: 'Too many requests. Please try again in an hour.' });
   }
 
-  // Validate body — Vercel auto-parses JSON body
   const body = req.body as { prompt?: unknown } | undefined;
   const prompt = body?.prompt;
 
-  if (!prompt || typeof prompt !== 'string' || prompt.length > 4000) {
+  if (!prompt || typeof prompt !== 'string' || prompt.length > 5000) {
     return res.status(400).json({ error: 'Invalid request.' });
   }
 
-  // API key — set in Vercel Dashboard → Environment Variables as GEMINI_API_KEY
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    console.error('[ask] GEMINI_API_KEY is not set');
+    console.error('[ask] GEMINI_API_KEY is not set in environment');
     return res.status(503).json({ error: 'AI service not configured.' });
   }
 
-  // Call Gemini 1.5 Flash
-  const GEMINI_URL =
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  console.log(`[ask] Prompt length: ${prompt.length} chars, IP: ${ip}`);
 
-  try {
-    const geminiRes = await fetch(GEMINI_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.4, maxOutputTokens: 300 },
-      }),
-    });
+  const answer = await callGemini(apiKey, prompt);
 
-    if (!geminiRes.ok) {
-      const errText = await geminiRes.text();
-      console.error('[ask] Gemini error:', geminiRes.status, errText);
-      return res.status(502).json({ error: 'AI service error.' });
-    }
-
-    const data = await geminiRes.json() as {
-      candidates?: Array<{ content: { parts: Array<{ text: string }> } }>;
-    };
-
-    const answer = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? null;
-    if (!answer) return res.status(502).json({ error: 'Empty response from AI.' });
-
-    return res.status(200).json({ answer });
-  } catch (err) {
-    console.error('[ask] Unexpected error:', err);
-    return res.status(500).json({ error: 'Internal server error.' });
+  if (!answer) {
+    return res.status(502).json({ error: 'AI service failed. Please try again.' });
   }
+
+  return res.status(200).json({ answer });
 }

@@ -1,160 +1,350 @@
-import React from 'react';
-import { FiGithub, FiExternalLink } from 'react-icons/fi';
-import { FolderIcon } from '@heroicons/react/24/outline';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { FiGithub, FiExternalLink, FiArrowRight } from 'react-icons/fi';
+
+const featuredProjects = [
+  {
+    id: 'sql-builder',
+    title: 'Visual SQL Builder',
+    subtitle: 'Full-Stack Query Engine',
+    description:
+      'Engineered a full-stack Visual SQL Builder with a React-based UI and a secure Deno-powered Supabase Edge Function, enabling users to build complex SQL queries visually and safely without writing raw SQL.',
+    tags: ['React.js', 'Deno', 'Supabase', 'Edge Functions', 'SQL', 'TypeScript'],
+    github: 'https://github.com/SoumyadipCodes19/Visual_SQL_Builder',
+    demo: 'https://visual-sql-builder.vercel.app/',
+    accentColor: '#00F5FF',
+    pattern: 'grid',
+  },
+  {
+    id: 'deadzone',
+    title: 'DeadZone',
+    subtitle: 'Network Intelligence App',
+    description:
+      'Engineered a React.js web application that maps network dead zones through real-time speed testing and geolocation data, featuring an intelligent reliability scoring system to optimize network coverage across locations.',
+    tags: ['React.js', 'Leaflet.js', 'Geolocation API', 'Axios', 'Tailwind'],
+    github: 'https://github.com/SoumyadipCodes19/DeadZone',
+    demo: 'https://deadzone-beige.vercel.app/',
+    accentColor: '#7B2FFF',
+    pattern: 'dots',
+  },
+];
+
+const otherProjects = [
+  {
+    id: 'returns-intelligence',
+    title: 'Returns Intelligence System',
+    subtitle: 'AI-Powered ML System',
+    description:
+      'A full-stack AI system predicting product return likelihood for retail using a Stacking Classifier (Random Forest + Logistic Regression) with intelligent routing — Restock, Resell, Donate, or Manual Review. ~85% accuracy.',
+    tags: ['Python', 'FastAPI', 'scikit-learn', 'React', 'Pandas', 'NumPy'],
+    github: 'https://github.com/SoumyadipCodes19/returns-intelligence-system',
+    demo: null,
+    accentColor: '#00FF88',
+    badge: 'AI · ML',
+  },
+  {
+    id: 'chrona',
+    title: 'CHRONA',
+    subtitle: 'Premium Calendar App',
+    description:
+      'A premium, high-tactile wall calendar built with Next.js 14, TypeScript, and Framer Motion — blending physical calendar aesthetics with digital productivity, Web Audio API, and ICS export functionality.',
+    tags: ['Next.js 14', 'TypeScript', 'Framer Motion', 'Web Audio API', 'CSS'],
+    github: 'https://github.com/SoumyadipCodes19/CHRONA',
+    demo: 'https://chrona-pi.vercel.app',
+    accentColor: '#00F5FF',
+    badge: 'Design · UX',
+  },
+  {
+    id: 'csv-plotter',
+    title: 'CSV Plotter',
+    subtitle: 'Data Visualization Tool',
+    description:
+      'A React-based CSV visualization tool that converts spreadsheet data into interactive, publication-ready charts with real-time rendering, multiple chart types, and a clean intuitive interface.',
+    tags: ['React.js', 'Recharts', 'Tailwind CSS', 'CSV', 'JavaScript'],
+    github: 'https://github.com/SoumyadipCodes19/CSV_Plotter',
+    demo: 'https://csv-plotter.vercel.app',
+    accentColor: '#7B2FFF',
+    badge: 'Data · Viz',
+  },
+];
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, delay: i * 0.12, ease: [0.25, 0.46, 0.45, 0.94] },
+  }),
+};
 
 const Projects: React.FC = () => {
-  const projects = [
-    {
-      title: 'CSV Plotter',
-      description: 'Engineered a React-based CSV visualization tool that converts spreadsheet data into interactive charts using Recharts and Tailwind CSS, enabling dynamic data analysis.',
-      technologies: ['React.js', 'Tailwind.css', 'Plotly.js', 'Recharts'],
-      github: 'https://github.com/SoumyadipCodes19/CSV-Plotter',
-      demo: 'https://csv-plotter.vercel.app/'
-    },
-    {
-      title: 'DeadZone',
-      description: 'Engineered a React.js web application that maps network dead zones through real-time speed testing and geolocation data, featuring an intelligent reliability scoring system to optimize network coverage across locations.',
-      technologies: ['React.js', 'Tailwind.css', 'Axis', 'Leaflet.js'],
-      github: 'https://github.com/SoumyadipCodes19/DeadZone',
-      demo: 'https://deadzone-beige.vercel.app/'
-    }
-  ];
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.3
-      }
-    }
-  };
-
-  const projectVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut"
-      }
-    }
-  };
-
-  const techStackVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        duration: 0.4
-      }
-    }
-  };
-
-  const titleVariants = {
-    hidden: { opacity: 0, y: -50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 15
-      }
-    }
-  };
-
-  const iconVariants = {
-    initial: { scale: 1 },
-    hover: { 
-      scale: 1.2,
-      rotate: 360,
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 10
-      }
-    }
-  };
+  const [_hoveredId, setHoveredId] = useState<string | null>(null);
 
   return (
-    <section id="projects" className="py-20 bg-darkBg">
-      <motion.div 
-        className="container mx-auto px-4"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        variants={containerVariants}
-      >
-        <motion.div 
-          className="flex items-center gap-2 mb-12"
-          variants={titleVariants}
+    <section id="projects" className="py-28 relative overflow-hidden">
+      <div
+        className="mesh-orb w-80 h-80 bg-emerald-neon/8 bottom-0 left-20"
+        style={{ position: 'absolute' }}
+      />
+
+      <div className="container mx-auto px-6 lg:px-16 relative z-10">
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6 }}
+          className="mb-16"
         >
-          <motion.div
-            whileHover="hover"
-            variants={iconVariants}
-            className="text-secondary"
-          >
-            <FolderIcon className="w-8 h-8" />
-          </motion.div>
-          <h2 className="text-3xl font-bold text-textPrimary">Projects</h2>
+          <p className="section-label mb-3">03. Work</p>
+          <h2 className="section-title">Projects</h2>
+          <div
+            className="w-16 h-1 mt-4 rounded-full"
+            style={{ background: 'linear-gradient(90deg, #7B2FFF, #00FF88)' }}
+          />
         </motion.div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {projects.map((project) => (
+
+        {/* Featured — 2-col top row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {featuredProjects.map((project, i) => (
             <motion.div
-              key={project.title}
-              className="bg-primary p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow"
-              variants={projectVariants}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              key={project.id}
+              custom={i}
+              variants={cardVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.15 }}
+              className="relative group"
+              onHoverStart={() => setHoveredId(project.id)}
+              onHoverEnd={() => setHoveredId(null)}
             >
-              <h3 className="text-2xl font-semibold text-textPrimary mb-4">{project.title}</h3>
-              <p className="text-textSecondary mb-6">{project.description}</p>
-              <motion.ul 
-                className="flex flex-wrap gap-2 mb-6"
-                variants={techStackVariants}
+              <motion.div
+                className="glass-card p-8 h-full relative overflow-hidden"
+                whileHover={{
+                  scale: 1.01,
+                  boxShadow: `0 0 50px ${project.accentColor}20`,
+                  borderColor: project.accentColor + '40',
+                }}
+                style={{ minHeight: '300px' }}
+                transition={{ duration: 0.25 }}
               >
-                {project.technologies.map((tech) => (
-                  <motion.li
-                    key={tech}
-                    className="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-sm"
-                    whileHover={{ scale: 1.1 }}
-                  >
-                    {tech}
-                  </motion.li>
-                ))}
-              </motion.ul>
-              <div className="flex gap-4">
-                <motion.a
-                  href={project.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-textSecondary hover:text-secondary transition-colors"
-                  whileHover={{ scale: 1.2, rotate: 5 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <FiGithub className="w-6 h-6" />
-                </motion.a>
-                <motion.a
-                  href={project.demo}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-textSecondary hover:text-secondary transition-colors"
-                  whileHover={{ scale: 1.2, rotate: 5 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <FiExternalLink className="w-6 h-6" />
-                </motion.a>
-              </div>
+                {/* Hover pattern */}
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{
+                    backgroundImage:
+                      project.pattern === 'grid'
+                        ? `linear-gradient(${project.accentColor}08 1px, transparent 1px), linear-gradient(90deg, ${project.accentColor}08 1px, transparent 1px)`
+                        : `radial-gradient(${project.accentColor}15 1px, transparent 1px)`,
+                    backgroundSize:
+                      project.pattern === 'grid' ? '30px 30px' : '20px 20px',
+                  }}
+                />
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"
+                  style={{
+                    background: `radial-gradient(ellipse at top left, ${project.accentColor}08, transparent 60%)`,
+                  }}
+                />
+
+                <div className="relative z-10 flex flex-col h-full">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <span
+                        className="font-mono text-xs mb-2 block"
+                        style={{ color: project.accentColor }}
+                      >
+                        {project.subtitle}
+                      </span>
+                      <h3 className="text-2xl font-bold text-text-primary">
+                        {project.title}
+                      </h3>
+                    </div>
+                    <span
+                      className="font-mono text-xs px-2 py-1 rounded-full flex-shrink-0"
+                      style={{
+                        background: project.accentColor + '15',
+                        color: project.accentColor,
+                        border: `1px solid ${project.accentColor}30`,
+                      }}
+                    >
+                      Featured
+                    </span>
+                  </div>
+
+                  <p className="text-text-secondary leading-relaxed mb-6 flex-1">
+                    {project.description}
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {project.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="font-mono text-xs px-3 py-1 rounded-full"
+                        style={{
+                          background: project.accentColor + '10',
+                          color: project.accentColor,
+                          border: `1px solid ${project.accentColor}25`,
+                        }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    <motion.a
+                      href={project.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm font-mono text-text-secondary hover:text-text-primary transition-colors"
+                      whileHover={{ x: 3 }}
+                    >
+                      <FiGithub className="w-4 h-4" /> Code
+                    </motion.a>
+                    <motion.a
+                      href={project.demo}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm font-mono transition-colors"
+                      style={{ color: project.accentColor }}
+                      whileHover={{ x: 3 }}
+                    >
+                      <FiExternalLink className="w-4 h-4" /> Live Demo{' '}
+                      <FiArrowRight className="w-3 h-3" />
+                    </motion.a>
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
           ))}
         </div>
-      </motion.div>
+
+        {/* Other Projects — 3-col bottom row */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {otherProjects.map((project, i) => (
+            <motion.div
+              key={project.id}
+              custom={i + 2}
+              variants={cardVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.1 }}
+              className="relative group"
+            >
+              <motion.div
+                className="glass-card p-6 h-full relative overflow-hidden flex flex-col"
+                whileHover={{
+                  scale: 1.015,
+                  boxShadow: `0 0 35px ${project.accentColor}18`,
+                  borderColor: project.accentColor + '35',
+                }}
+                transition={{ duration: 0.22 }}
+              >
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl pointer-events-none"
+                  style={{
+                    background: `radial-gradient(ellipse at top right, ${project.accentColor}06, transparent 65%)`,
+                  }}
+                />
+
+                <div className="relative z-10 flex flex-col h-full">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <span
+                        className="font-mono text-xs block mb-1"
+                        style={{ color: project.accentColor }}
+                      >
+                        {project.subtitle}
+                      </span>
+                      <h3 className="text-lg font-bold text-text-primary">
+                        {project.title}
+                      </h3>
+                    </div>
+                    <span
+                      className="font-mono text-xs px-2 py-1 rounded-full flex-shrink-0 ml-2"
+                      style={{
+                        background: project.accentColor + '12',
+                        color: project.accentColor,
+                        border: `1px solid ${project.accentColor}25`,
+                      }}
+                    >
+                      {project.badge}
+                    </span>
+                  </div>
+
+                  <p className="text-text-secondary text-sm leading-relaxed mb-4 flex-1">
+                    {project.description}
+                  </p>
+
+                  <div className="flex flex-wrap gap-1.5 mb-4">
+                    {project.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="font-mono text-xs px-2 py-0.5 rounded-full"
+                        style={{
+                          background: project.accentColor + '08',
+                          color: project.accentColor + 'CC',
+                          border: `1px solid ${project.accentColor}20`,
+                        }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center gap-4 mt-auto">
+                    <motion.a
+                      href={project.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 text-xs font-mono text-text-secondary hover:text-text-primary transition-colors"
+                      whileHover={{ x: 2 }}
+                    >
+                      <FiGithub className="w-3.5 h-3.5" /> Code
+                    </motion.a>
+                    {project.demo && (
+                      <motion.a
+                        href={project.demo}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 text-xs font-mono transition-colors"
+                        style={{ color: project.accentColor }}
+                        whileHover={{ x: 2 }}
+                      >
+                        <FiExternalLink className="w-3.5 h-3.5" /> Demo
+                      </motion.a>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* GitHub CTA */}
+        <motion.div
+          className="text-center mt-12"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4 }}
+        >
+          <motion.a
+            href="https://github.com/SoumyadipCodes19"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-outline inline-flex items-center gap-2"
+            whileHover={{ scale: 1.04, y: -2 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            <FiGithub className="w-4 h-4" />
+            More on GitHub
+          </motion.a>
+        </motion.div>
+      </div>
     </section>
   );
 };
 
-export default Projects; 
+export default Projects;

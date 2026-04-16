@@ -26,7 +26,9 @@ const MODELS = [
 
 const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 
-async function callGemini(apiKey: string, prompt: string): Promise<string | null> {
+async function callGemini(apiKey: string, prompt: string): Promise<{ answer?: string; error?: string }> {
+  let lastError = 'Unknown error';
+
   for (const model of MODELS) {
     try {
       const url = `${BASE_URL}/${model}:generateContent?key=${apiKey}`;
@@ -42,7 +44,8 @@ async function callGemini(apiKey: string, prompt: string): Promise<string | null
       const raw = await res.text();
 
       if (!res.ok) {
-        console.error(`[ask] ${model} failed ${res.status}: ${raw.slice(0, 300)}`);
+        lastError = `[${model}] ${res.status}: ${raw.slice(0, 200)}`;
+        console.error(`[ask] ${lastError}`);
         continue; // try next model
       }
 
@@ -50,15 +53,20 @@ async function callGemini(apiKey: string, prompt: string): Promise<string | null
         candidates?: Array<{ content: { parts: Array<{ text: string }> } }>;
       };
       const answer = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? null;
+      
       if (answer) {
         console.log(`[ask] Success with model: ${model}`);
-        return answer;
+        return { answer };
+      } else {
+        lastError = `[${model}] No answer in response body.`;
       }
-    } catch (err) {
-      console.error(`[ask] ${model} threw:`, err);
+    } catch (err: any) {
+      lastError = `[${model}] Exception: ${err?.message || 'unknown'}`;
+      console.error(`[ask] ${lastError}`);
     }
   }
-  return null;
+  
+  return { error: lastError };
 }
 
 // ─── Handler ─────────────────────────────────────────────────────────────────
@@ -94,11 +102,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   console.log(`[ask] Prompt length: ${prompt.length} chars, IP: ${ip}`);
 
-  const answer = await callGemini(apiKey, prompt);
+  const result = await callGemini(apiKey, prompt);
 
-  if (!answer) {
-    return res.status(502).json({ error: 'AI service failed. Please try again.' });
+  if (result.error) {
+    // Return the actual error message to the browser so we can see what's wrong!
+    return res.status(502).json({ error: `AI service failed: ${result.error}` });
   }
 
-  return res.status(200).json({ answer });
+  return res.status(200).json({ answer: result.answer });
 }

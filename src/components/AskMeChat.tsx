@@ -357,7 +357,7 @@ const AskMeChat: React.FC = () => {
               </form>
               <p className="font-mono text-xs text-text-muted mt-2 text-center">
                 Powered by TF-IDF RAG +{' '}
-                <span style={{ color: '#00F5FF' }}>Gemini 1.5 Flash</span>
+                <span style={{ color: '#00F5FF' }}>Gemini 2.5 Flash</span>
               </p>
             </div>
           </motion.div>
